@@ -1,0 +1,5 @@
+{"template":"carousel","shared":{"tag":"STUCK → UNSTUCK"},"slides":[
+{"kind":"hook","title":"The symptom, in *one line*.","lead":"What was at stake, in one sentence."},
+{"kicker":"The cause","title":"What was really *going on*.","code":"// before\n- what we did\n+ what fixed it"},
+{"title":"The result","before":{"value":"before","label":"unit"},"after":{"value":"after","label":"unit"}},
+{"kind":"end","dark":true,"title":"We build AI systems that run in *production*.","cta":"sifars.com"}]}

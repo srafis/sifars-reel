@@ -1,0 +1,21 @@
+# secrets
+.env
+.env.*
+
+# client and side projects never enter the repo: inputs, reels and postable output live here
+projects/
+# project-specific agent notes (pronunciations, people, sources) stay local
+AGENTS.local.md
+CLAUDE.local.md
+
+# project-local tooling (reinstall: npm install, uv venv .venv)
+node_modules/
+.venv/
+.cache/
+.local-home/
+vendor/
+.npmrc
+
+# scratch
+**/.hyperframes/
+**/renders/

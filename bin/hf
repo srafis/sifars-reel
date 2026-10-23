@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Runs the project-local HyperFrames CLI with every cache scoped to this repo.
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export HOME="$ROOT/.local-home"
+export XDG_CACHE_HOME="$HOME/.cache" XDG_STATE_HOME="$HOME/.state" XDG_CONFIG_HOME="$HOME/.config" XDG_DATA_HOME="$HOME/.data"
+export npm_config_cache="$ROOT/.cache/npm"
+export HYPERFRAMES_NO_TELEMETRY=1
+exec "$ROOT/node_modules/.bin/hyperframes" "$@"

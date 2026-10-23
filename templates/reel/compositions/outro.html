@@ -1,0 +1,41 @@
+<template>
+  <!-- Fixed Sifars outro. Voice line: "That's what we build, at Siffars." (captions off for it).
+       Set the three film times below from vo/timeline.json (ASR-measured word starts), then mount it as the
+       last scene: host data-start = S, data-duration = film end - S. Cue: soft-whoosh-3 at THATS, soft-boom at SIFARS. -->
+  <style>
+    #root { position: absolute; inset: 0; }
+    #ot-blue { position: absolute; inset: 0; background: var(--blue); }
+    #ot-brand { position: absolute; left: 72px; right: 72px; top: 250px; height: 880px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 56px; text-align: center; }
+    /* lockup proportions from brand/logo/v2 (mark 163x164, wordmark 118 tall, 173 px in, 23 px down) */
+    #ot-lock { position: relative; width: 552px; height: 164px; }
+    #ot-mark { position: absolute; left: 0; top: 0; width: 163px; height: 164px; }
+    #ot-word { position: absolute; left: 173px; top: 23px; height: 118px; width: auto; }
+    #ot-tag { font: 700 64px/1.15 "Poppins", sans-serif; letter-spacing: -0.03em; }
+    #ot-url { font: 500 40px/1 "IBM Plex Mono", monospace; color: rgba(255, 255, 255, 0.8); }
+  </style>
+  <div id="root" data-composition-id="outro" data-width="1080" data-height="1920">
+    <div class="scene dark">
+      <div id="ot-blue"></div>
+      <div id="ot-brand">
+        <div id="ot-lock">
+          <img id="ot-mark" src="assets/img/sifars-mark-white.png" alt="" />
+          <img id="ot-word" src="assets/img/sifars-wordmark-white.png" alt="Sifars" />
+        </div>
+        <div id="ot-tag"><span class="w">We</span> <span class="w">build</span> <span class="w">AI</span> <span class="w">systems</span> <span class="w">that</span> <span class="w">run</span> <span class="w">in</span> <span class="w">production.</span></div>
+        <div id="ot-url">sifars.com</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const S = 0.0, THATS = 0.2, SIFARS = 1.4;   // <- film times: scene start, "That's", "Siffars"
+    const at = t => +(t - S).toFixed(3);
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#ot-blue", { clipPath: "circle(0% at 50% 100%)" }, { clipPath: "circle(150% at 50% 100%)", duration: 0.55, ease: "power2.inOut" }, at(THATS - 0.1));
+    // the mark turns in and lands ON "Sifars"; the wordmark wipes out from behind it
+    tl.fromTo("#ot-mark", { rotation: -120, scale: 0.4, opacity: 0, filter: "blur(10px)" }, { rotation: 0, scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.7, ease: "expo.out" }, at(SIFARS - 0.4));
+    tl.fromTo("#ot-word", { clipPath: "inset(0 100% 0 0)", x: -40 }, { clipPath: "inset(0 0% 0 0)", x: 0, duration: 0.5, ease: "expo.out" }, at(SIFARS - 0.06));
+    tl.fromTo("#ot-tag .w", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.15, stagger: 0.06, ease: "power2.out" }, at(SIFARS + 0.3));
+    tl.fromTo("#ot-url", { opacity: 0 }, { opacity: 1, duration: 0.3 }, at(SIFARS + 0.85));
+    window.__timelines["outro"] = tl;
+  </script>
+</template>

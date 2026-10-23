@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family: "Poppins"; font-weight: 400; src: url("{{ROOT}}/brand/fonts/poppins-latin-400-normal.woff2"); }
+  @font-face { font-family: "Poppins"; font-weight: 500; src: url("{{ROOT}}/brand/fonts/poppins-latin-500-normal.woff2"); }
+  @font-face { font-family: "Poppins"; font-weight: 600; src: url("{{ROOT}}/brand/fonts/poppins-latin-600-normal.woff2"); }
+  @font-face { font-family: "Poppins"; font-weight: 700; src: url("{{ROOT}}/brand/fonts/poppins-latin-700-normal.woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 400; src: url("{{ROOT}}/brand/fonts/ibm-plex-mono-latin-400-normal.woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 500; src: url("{{ROOT}}/brand/fonts/ibm-plex-mono-latin-500-normal.woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 600; src: url("{{ROOT}}/brand/fonts/ibm-plex-mono-latin-600-normal.woff2"); }
+  @import url("{{ROOT}}/brand/tokens.css");
+  :root {
+    --sf-blue: #005ef8; --sf-ink: #080c16; --sf-ink-2: #10131a; --sf-mist: #eef0f4;
+    --sf-grey: #9a9ea8; --sf-grey-2: #5a5d65; --sf-good: #1fa463; --sf-bad: #e5384a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1350px; overflow: hidden; }
+  body { font-family: "Poppins", sans-serif; color: var(--sf-ink); background: var(--sf-mist); }
+  body.dark { background: var(--sf-ink); color: #fff; }
+  .page { position: absolute; inset: 0; padding: 88px 88px 96px; display: flex; flex-direction: column; }
+  .top { display: flex; justify-content: space-between; align-items: center; font: 500 26px/1 "IBM Plex Mono", monospace; letter-spacing: 0.04em; color: var(--sf-grey-2); }
+  .dark .top { color: var(--sf-grey); }
+  .tag { display: flex; align-items: center; gap: 14px; }
+  .tag i { width: 14px; height: 14px; border-radius: 50%; background: var(--sf-blue); display: block; }
+  .body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .kicker { font: 500 30px/1.2 "IBM Plex Mono", monospace; color: var(--sf-blue); margin-bottom: 36px; }
+  h1 { font-weight: 700; font-size: 104px; line-height: 1.02; letter-spacing: -0.035em; }
+  h2 { font-weight: 600; font-size: 76px; line-height: 1.06; letter-spacing: -0.03em; }
+  em { font-style: normal; color: var(--sf-blue); }
+  .dark em { color: #5b8cff; }
+  p.lead { margin-top: 44px; font-size: 38px; line-height: 1.38; color: var(--sf-grey-2); max-width: 860px; }
+  .dark p.lead { color: #b9bdc7; }
+  .code { margin-top: 52px; background: var(--sf-ink-2); color: #e6e8ee; border-radius: 22px; padding: 40px 44px; font: 400 29px/1.55 "IBM Plex Mono", monospace; white-space: pre; overflow: hidden; }
+  .code .c { color: #7d8496; } .code .k { color: #7ea6ff; } .code .s { color: #8fd6a9; } .code .r { color: #ff7a88; }
+  .nums { margin-top: 64px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 28px; }
+  .num { display: flex; flex-direction: column; gap: 14px; }
+  .num b { font: 600 150px/0.9 "Poppins"; letter-spacing: -0.05em; }
+  .num span { font: 500 28px/1.2 "IBM Plex Mono", monospace; color: var(--sf-grey-2); }
+  .num.before b { color: var(--sf-grey); text-decoration: line-through; text-decoration-thickness: 6px; }
+  .num.after b { color: var(--sf-blue); }
+  .arrow { font: 400 90px/1 "Poppins"; color: var(--sf-grey); padding-bottom: 40px; }
+  .shot { margin-top: 52px; border-radius: 22px; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(8,12,22,.45); }
+  .shot img { width: 100%; display: block; }
+  .bottom { display: flex; justify-content: space-between; align-items: center; }
+  .bottom img { height: 54px; }
+  .swipe { font: 500 26px/1 "IBM Plex Mono", monospace; color: var(--sf-grey-2); }
+  .end .body { align-items: flex-start; }
+  .end h2 { font-size: 88px; }
+  .cta { margin-top: 56px; display: inline-flex; align-items: center; gap: 18px; background: var(--sf-blue); color: #fff; font: 600 34px/1 "Poppins"; padding: 28px 40px; border-radius: 16px; }
+</style>
+</head>
+<body>
+<div class="page" id="page"></div>
+<script>
+/*{{SLIDE}}*/
+const s = window.SLIDE, sh = s.shared || {};
+const esc = t => String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+// *word* marks the one accent word; `code` is rendered mono.
+const rich = t => esc(t).replace(/\*([^*]+)\*/g, "<em>$1</em>").replace(/`([^`]+)`/g, '<span style="font-family:IBM Plex Mono">$1</span>');
+const codeHl = t => esc(t).split("\n").map(l => l.replace(/^(\s*)(\/\/.*|#.*)$/, '$1<span class="c">$2</span>')
+  .replace(/^(\s*)([-!]\s.*)$/, '$1<span class="r">$2</span>').replace(/^(\s*)(\+\s.*)$/, '$1<span class="s">$2</span>')).join("\n");
+const logo = s.dark ? "sifars-full-white.png" : "sifars-full-ink.png";
+if (s.dark) document.body.classList.add("dark");
+if (s.kind === "end") document.body.classList.add("end");
+
+let mid = "";
+if (s.kicker) mid += `<div class="kicker">${rich(s.kicker)}</div>`;
+if (s.kind === "hook") mid += `<h1>${rich(s.title)}</h1>`;
+else mid += `<h2>${rich(s.title)}</h2>`;
+if (s.lead) mid += `<p class="lead">${rich(s.lead)}</p>`;
+if (s.code) mid += `<div class="code">${codeHl(s.code)}</div>`;
+if (s.image) mid += `<div class="shot"><img src="{{ROOT}}/${s.image}"></div>`;
+if (s.before) mid += `<div class="nums"><div class="num before"><b>${esc(s.before.value)}</b><span>${esc(s.before.label)}</span></div><div class="arrow">→</div><div class="num after"><b>${esc(s.after.value)}</b><span>${esc(s.after.label)}</span></div></div>`;
+if (s.cta) mid += `<div class="cta">${esc(s.cta)}</div>`;
+
+const last = s.index === s.total;
+document.getElementById("page").innerHTML = `
+  <div class="top"><div class="tag"><i></i>${esc(sh.tag || "")}</div><div>${s.index}/${s.total}</div></div>
+  <div class="body">${mid}</div>
+  <div class="bottom"><img src="{{ROOT}}/brand/logo/${logo}"><div class="swipe">${last ? esc(sh.handle || "@sifars.us") : "swipe →"}</div></div>`;
+</script>
+</body>
+</html>

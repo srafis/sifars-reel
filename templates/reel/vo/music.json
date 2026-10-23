@@ -1,0 +1,10 @@
+{
+ "bpm": 84,
+ "sections": [
+  { "from": "start", "chords": ["Am", "Am"], "cutoff": 900, "density": 0.5 },
+  { "from": { "line": "02-setup" }, "chords": ["F", "C", "Am", "G"], "cutoff": 1300, "density": 0.8 },
+  { "from": { "line": "03-symptom", "word": "stopped" }, "chords": ["Am"], "cutoff": 420, "density": 0 },
+  { "from": { "line": "05-fix" }, "chords": ["C", "G", "Am", "F"], "cutoff": 1700, "density": 0.9 },
+  { "from": { "line": "99-outro" }, "chords": ["Fmaj7", "C"], "cutoff": 1500, "density": 0.5 }
+ ]
+}

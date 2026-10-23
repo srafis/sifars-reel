@@ -1,0 +1,17 @@
+/* Sifars brand tokens, taken from sifars.com. Shared by reels and static templates. */
+:root {
+  --sf-blue: #005ef8;
+  --sf-blue-soft: #7e97ff;
+  --sf-ink: #080c16;
+  --sf-ink-2: #10131a;
+  --sf-ink-3: #0e1422;
+  --sf-mist: #eef0f4;
+  --sf-paper: #f6f8fb;
+  --sf-grey: #9a9ea8;
+  --sf-grey-2: #5a5d65;
+  --sf-good: #2bd47d;
+  --sf-bad: #ff4d5e;
+
+  --sf-font-display: "Poppins", sans-serif;
+  --sf-font-mono: "IBM Plex Mono", monospace;
+}

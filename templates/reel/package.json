@@ -1,0 +1,10 @@
+{
+  "name": "REEL_NAME",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "../../../bin/hf preview",
+    "check": "../../../bin/hf check",
+    "render": "../../../bin/hf render"
+  }
+}

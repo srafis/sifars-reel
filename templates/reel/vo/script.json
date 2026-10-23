@@ -1,0 +1,10 @@
+{
+ "model": "eleven_v4",
+ "voice_id": "991lF4hc0xxfec4Y6B0i",
+ "voice_name": "Henry - Confident and Clear",
+ "voice_settings": { "stability": 0.5, "similarity_boost": 0.8, "style": 0.2, "use_speaker_boost": true },
+ "lines": [
+  { "id": "01-hook", "text": "SPOKEN TEXT (TTS spellings: Siffars + the project glossary in AGENTS.local.md; numbers as words)", "caption": "ON-SCREEN TEXT, SAME WORD COUNT" },
+  { "id": "99-outro", "text": "That's what we build, at Siffars.", "caption": "That's what we build, at Sifars.", "captions": false }
+ ]
+}
