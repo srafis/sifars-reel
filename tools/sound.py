@@ -63,7 +63,10 @@ def room(x, size=0.6, wet=0.18):
 
 
 def voice_level(reel):
-    """Peak and active RMS of the voice take, so everything else is set relative to it."""
+    """Peak and active RMS of the voice take, so everything else is set relative to it. A reel without a voice
+    (no assets/vo/take.mp3) gets a fixed reference level instead, and the music is not ducked."""
+    if not (reel / "assets/vo/take.mp3").exists():
+        return 0.5, 0.1, None
     wav = reel / "assets" / "vo" / "take.wav"
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(reel / "assets/vo/take.mp3"), "-ac", "1", "-ar", str(SR), str(wav)], check=True)
     v, _ = sf.read(wav)
@@ -226,7 +229,23 @@ def write_bed(reel):
 
     # duck under the voice: -7 dB while Henry speaks, back up in the gaps
     _, vrms, v = voice_level(reel)
-    lead = tl["take_start"]
+    if v is not None:
+        out = duck(out, v, vrms, tl["take_start"])
+    # voiced: bed sits 20 dB under the voice's active level (before ducking); no voice: the music carries the reel
+    under = 20 if v is not None else 12
+    w = int(0.4 * SR)
+    brms = np.sqrt(np.convolve(out ** 2, np.ones(w) / w, "same"))
+    loud = np.percentile(brms[brms > 0], 90)
+    out *= (vrms * 10 ** (-under / 20)) / loud
+    (reel / "assets" / "music").mkdir(parents=True, exist_ok=True)
+    wav = reel / "assets/music/bed.wav"
+    sf.write(wav, np.stack([out, out], 1), SR)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(wav), "-b:a", "192k", str(wav.with_suffix(".mp3"))], check=True)
+    wav.unlink()
+    print("bed", round(T, 2), "s;", len(sections), "sections at", [round(x[0], 2) for x in sections], "" if v is not None else "(no voice: not ducked)")
+
+
+def duck(out, v, vrms, lead):
     vv = np.zeros(len(out)); o = int(lead * SR); vv[o: o + len(v)] = np.abs(v[: len(out) - o])
     win = int(0.08 * SR)
     venv = np.sqrt(np.convolve(vv ** 2, np.ones(win) / win, "same"))
@@ -236,19 +255,7 @@ def write_bed(reel):
     for i, x in enumerate(speaking):
         cur = att * cur + (1 - att) * x if x > cur else rel * cur + (1 - rel) * x
         g[i] = cur
-    out *= 1 - g * (1 - 10 ** (-7 / 20))
-
-    # bed sits 20 dB under the voice's active level (before ducking)
-    w = int(0.4 * SR)
-    brms = np.sqrt(np.convolve(out ** 2, np.ones(w) / w, "same"))
-    loud = np.percentile(brms[brms > 0], 90)
-    out *= (vrms * 10 ** (-20 / 20)) / loud
-    (reel / "assets" / "music").mkdir(exist_ok=True)
-    wav = reel / "assets/music/bed.wav"
-    sf.write(wav, np.stack([out, out], 1), SR)
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(wav), "-b:a", "192k", str(wav.with_suffix(".mp3"))], check=True)
-    wav.unlink()
-    print("bed", round(T, 2), "s;", len(sections), "sections at", [round(x[0], 2) for x in sections])
+    return out * (1 - g * (1 - 10 ** (-7 / 20)))
 
 
 if __name__ == "__main__":

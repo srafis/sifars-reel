@@ -1,0 +1,17 @@
+{
+  "name": "create-sifars-reel",
+  "version": "0.1.0",
+  "description": "bun create sifars-reel — turn real engineering work into an Instagram post for @sifars.us",
+  "type": "module",
+  "bin": {
+    "create-sifars-reel": "index.js"
+  },
+  "files": [
+    "index.js",
+    "README.md"
+  ],
+  "engines": {
+    "bun": ">=1.2"
+  },
+  "license": "UNLICENSED"
+}

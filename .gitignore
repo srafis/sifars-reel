@@ -19,3 +19,6 @@ vendor/
 # scratch
 **/.hyperframes/
 **/renders/
+
+# python bytecode
+__pycache__/

@@ -1,13 +1,17 @@
 {
-  "name": "sifars-insta",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
+  "name": "sifars-reel",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Point an agent at real engineering work, get an Instagram post for @sifars.us.",
   "type": "commonjs",
+  "scripts": {
+    "reel": "bun launcher/main.ts",
+    "doctor": "bun launcher/main.ts --doctor"
+  },
+  "engines": {
+    "node": ">=22",
+    "bun": ">=1.2"
+  },
   "devDependencies": {
     "@fontsource/ibm-plex-mono": "^5.3.0",
     "@fontsource/lato": "^5.3.0",
