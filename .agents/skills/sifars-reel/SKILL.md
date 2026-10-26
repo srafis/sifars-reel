@@ -42,13 +42,15 @@ not be committed.
 ## Pipeline
 
 ```bash
-cd ~/code/sifars-insta
+cd <framework root>   # ~/.sifars-reel when installed with `bun create sifars-reel`
 tools/new-reel.sh <name>; R=projects/<name>/reel; HF=$PWD/bin/hf
-# 1. story: mine sources, write 3 one-line storylines, pick one, write $R/vo/script.json (text = spoken, caption = shown)
-.venv/bin/python -I tools/elevenlabs.py take $R            # one take, Henry
-(cd $R && $HF transcribe assets/vo/take.mp3 --engine parakeet --json >/dev/null)
-.venv/bin/python -I tools/asr-align.py $R                  # measured word times
+# 1. story: from the brief (projects/<name>/brief.md) or the sources, write $R/vo/script.json (text = spoken, caption = shown)
+# voiced:
+.venv/bin/python -I tools/elevenlabs.py take $R            # one take, Henry (checks the character quota first)
+tools/measure-words.sh $R                                  # measured word times (Parakeet; downloads once; Scribe fallback)
 .venv/bin/python -I tools/vo-timeline.py $R                # vo/timeline.json: line + word film times
+# no voice: instead of the three lines above, and no vo-take <audio> in index.html
+.venv/bin/python -I tools/silent-timeline.py $R            # read-paced timeline; captions carry the story
 # 2. print word times (jq '.lines[] | …' $R/vo/timeline.json), plan scene bounds + the word each visual lands on
 # 3. write $R/index.html (scene hosts, captions host, vo-take <audio>, music-bed <audio>, SFX markers) + compositions/*.html
 .venv/bin/python -I tools/captions.py $R                   # captions.html (skips lines with "captions": false)
@@ -65,9 +67,24 @@ Re-recorded the voice? Don't retime by hand: keep the old `vo/timeline.json`, re
 `tools/retime.py $R <old timeline> <new timeline>` moves every `const S`, `at(t)`, helper time (`arrive`, `words`,
 `done`, `one`, `counter`), cue and scene host word by word. Re-derive fixed-interval cues afterwards.
 
+No-voice reels: keep the script ~30% shorter than a voiced one (reading is slower than listening), make the captions
+bigger (the narration now), let the music carry more (`sound.py` sets it 12 dB under a reference level, not ducked).
+The outro still ends on "That's what we build, at Sifars." as type.
+
 Music plan (`vo/music.json`): sections anchored to a line or word, each with chords, filter cutoff and pluck density.
 Let the music act the story: sparse and minor on the problem, drop to a bare pad (density 0) when something on screen
 freezes or breaks, open into major at the fix.
+
+## Story formats (don't make every reel the same shape)
+
+Before scripting, propose 3–4 formats that fit the story and recommend one (the planner may already have chosen):
+- **Stuck → Unstuck** — a bug thriller: symptom, wrong guess, clue, cause, fix, result.
+- **What we cooked** — a demo of something shipped: the problem it removes, the product doing it, the number.
+- **Museum exhibits** — an origin story as numbered exhibits, one artefact per exhibit.
+- **Day counter** — a build told day by day, the counter driving the cuts.
+- **Before / after** — one number or screen transformed, with the one change that did it.
+- **Myth vs fact** — a common belief, the evidence from our logs, what's actually true.
+Still ONE story per reel, every fact sourced. Client projects get a stealth name (ask); no client name on screen.
 
 ## Layout rules (the user checks spacing frame by frame — check before showing)
 
@@ -108,3 +125,7 @@ In `projects/<name>/output/`: `<name>.mp4` (−14 LUFS, ≤ −1 dBTP), `<name>-
 (the story in 4–6 short lines + hashtags); superseded versions in `output/old/`. Write `REVIEW.md` in the reel:
 sources, creative calls, measured vs looked at, kept warnings. Optional carousel: `node statics/render.mjs <post.json>`
 (see `templates/statics/example-carousel.json`). ElevenLabs free tier: `mp3_44100_128` only.
+
+Carousels: write `projects/<name>/statics/<name>.json` like `templates/statics/example-carousel.json` (hook slide,
+2–5 story slides, end slide), render with `node statics/render.mjs projects/<name>/statics/<name>.json` (PNGs land in
+`projects/<name>/output/<name>/`), look at every slide, and fix spacing before finishing.

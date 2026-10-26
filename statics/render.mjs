@@ -26,7 +26,7 @@ const buildDir = join(root, ".cache", "statics", name);
 mkdirSync(outDir, { recursive: true });
 mkdirSync(buildDir, { recursive: true });
 
-const chrome = process.env.CHROME ?? ["/usr/bin/google-chrome-stable", "/usr/bin/chromium"].find(existsSync);
+const chrome = process.env.CHROME ?? ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "/usr/bin/google-chrome-stable", "/usr/bin/google-chrome", "/usr/bin/chromium"].find(existsSync);
 const profile = join(root, ".local-home", "chrome-statics");
 
 post.slides.forEach((slide, i) => {

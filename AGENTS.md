@@ -6,6 +6,11 @@ A framework for turning real engineering work into Instagram posts for @sifars.u
 
 ## How to use it
 
+- Developers start with `bun create sifars-reel` (package in `packages/create-sifars-reel/`): it installs or updates
+  this repo in `~/.sifars-reel` and runs `launcher/main.ts` — doctor → setup → plan with Claude (Opus 5.5, high) →
+  ElevenLabs key if voiced → build with Claude, Codex or OpenCode in yolo mode. Inside a checkout: `bun run reel`
+  (`--build <project>` resumes a build, `--doctor`, `--dry-run`).
+
 - "Make a reel from ~/code/<project>" or "make a reel about how we fixed X" → follow the `sifars-reel` skill
   (`.agents/skills/sifars-reel/SKILL.md`). Read it in full before starting.
 - Everything for one piece of work goes in `projects/<name>/` (git-ignored): `reel/` (the HyperFrames project),
@@ -23,15 +28,19 @@ A framework for turning real engineering work into Instagram posts for @sifars.u
 | `templates/statics/`, `statics/` | Carousel template and its renderer (HTML → PNG with headless Chrome)                                                                                                                                                  |
 | `brand/`                         | Tokens, fonts, logo (`brand/logo/`, current single-colour mark; source in `brand/logo/v2/`)                                                                                                                           |
 | `bin/hf`                         | HyperFrames CLI with every cache kept inside the repo                                                                                                                                                                 |
+| `launcher/`                      | `main.ts` (the flow above) and `prompts/` (planner system prompt, builder prompt)                                                                                                                                       |
+| `packages/create-sifars-reel/`   | The npm package behind `bun create sifars-reel` (published separately)                                                                                                                                                  |
 
 ## Setup (nothing global)
 
 ```bash
-npm install                                   # node_modules: hyperframes, gsap, fonts
-UV_CACHE_DIR=.cache/uv uv venv .venv && UV_CACHE_DIR=.cache/uv uv pip install --python .venv/bin/python pillow numpy scipy soundfile
-bin/hf models install parakeet                # local speech-to-text for word timing (lands in .local-home)
-echo "ELEVEN_LABS_API_KEY=..." > .env         # never committed
+bun run reel --setup-only                     # node_modules (bun), .venv (uv, requirements.txt); caches in .cache/
+echo 'ELEVEN_LABS_API_KEY="..."' > .env       # only for voiced reels; the launcher asks for it when needed
 ```
+
+Prerequisites (checked by `bun run doctor`, never installed for you): git, Node 22+, Bun, ffmpeg, uv, Chrome,
+Claude Code; Codex and OpenCode are optional builders. The Parakeet speech model (~640 MB, word timing for voiced
+reels) downloads into `.local-home/` on first use.
 
 Never install anything globally: no `npm -g`, no system pip, no global skills, no browser downloads (system Chrome
 is used). Caches stay in `.cache/` and `.local-home/`.

@@ -184,7 +184,8 @@ async function ensureVoiceKey(needed: number): Promise<boolean> {
 const fill = (tpl: string, vars: Record<string, string>) => tpl.replace(/\{\{(\w+)\}\}/g, (_, k) => vars[k] ?? "");
 
 function agentCommand(builder: string, prompt: string, yolo: boolean, extra: string[] = []): [string, string[]] {
-  if (builder === "claude") return ["claude", ["--model", MODEL, "--effort", EFFORT, ...(yolo ? ["--dangerously-skip-permissions"] : []), ...extra, prompt]];
+  // the prompt goes first: --add-dir and --allowedTools take lists and would swallow a trailing prompt
+  if (builder === "claude") return ["claude", [prompt, "--model", MODEL, "--effort", EFFORT, ...(yolo ? ["--dangerously-skip-permissions"] : []), ...extra]];
   if (builder === "codex") return ["codex", [...(yolo ? ["--dangerously-bypass-approvals-and-sandbox"] : []), prompt]];
   if (builder === "opencode") return ["opencode", [...(yolo ? ["--auto"] : []), "--prompt", prompt, ROOT]];
   return fail(`unknown builder "${builder}"`);
@@ -253,8 +254,8 @@ async function main() {
       `Builders installed: ${builders.join(", ")}. ${keyNote}`;
     const sessionDirs = [join(homedir(), ".claude/projects"), join(homedir(), ".codex/sessions")].filter(existsSync);
     const extra = ["--append-system-prompt", plan, "--add-dir", source, ...sessionDirs.flatMap((d) => ["--add-dir", d]),
-      "--allowedTools", "Read", "Grep", "Glob", "Bash(git log:*)", "Bash(git show:*)", "Bash(git -C:*)", "Bash(ls:*)", "Bash(jq:*)",
-      "Bash(grep:*)", "Bash(rg:*)", "Bash(find:*)", "Bash(head:*)", "Bash(tail:*)", "Bash(wc:*)", "Write(projects/**)", "Edit(projects/**)"];
+      "--allowedTools", ["Read", "Grep", "Glob", "Bash(git log:*)", "Bash(git show:*)", "Bash(git -C:*)", "Bash(ls:*)", "Bash(jq:*)",
+        "Bash(grep:*)", "Bash(rg:*)", "Bash(find:*)", "Bash(head:*)", "Bash(tail:*)", "Bash(wc:*)", "Edit(projects/**)"].join(",")];
     say(`\n${c.bold}Step 1/2 · Plan${c.off} ${c.dim}Claude (${MODEL}, ${EFFORT}) will look at your work and suggest ideas.${c.off}\n`);
     const [cmd, argv] = agentCommand("claude", first, false, extra);
     launch(cmd, argv);
