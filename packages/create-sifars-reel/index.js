@@ -10,11 +10,18 @@ import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 
-const REPO = process.env.SIFARS_REEL_REPO || "OWNER/sifars-reel";
+const REPO = process.env.SIFARS_REEL_REPO || "srafis/sifars-reel";
 const HOME = resolve(process.env.SIFARS_REEL_HOME || join(homedir(), ".sifars-reel"));
 const args = process.argv.slice(2);
-const positional = args.filter((a) => !a.startsWith("-"));
-const passthrough = args.filter((a) => a.startsWith("-"));
+// --source <dir> is the same as the folder argument; every other flag goes to the launcher (--build keeps its value).
+const positional = [];
+const passthrough = [];
+for (let i = 0; i < args.length; i++) {
+  if (!args[i].startsWith("-")) positional.push(args[i]);
+  else if (args[i] === "--source") positional.unshift(args[++i]);
+  else if (args[i] === "--build") passthrough.push(args[i], args[++i]);
+  else passthrough.push(args[i]);
+}
 const source = resolve(positional[0] ?? process.cwd());
 
 const quiet = (cmd, argv, cwd) => spawnSync(cmd, argv, { cwd, encoding: "utf8" });

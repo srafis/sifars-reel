@@ -288,7 +288,7 @@ async function main() {
   }).trim();
 
   say(`\n${c.bold}Step 2/2 · Build${c.off} ${c.dim}${h.builder} will build projects/${h.project} in yolo mode: it runs commands and edits files`);
-  say(`in ${ROOT} without asking. If it stops, resume with: bun launcher/main.ts --build ${h.project}${c.off}\n`);
+  say(`in ${ROOT} without asking. If it stops, resume with: bun create sifars-reel --build ${h.project}${c.off}\n`);
   const [cmd, argv] = agentCommand(h.builder, prompt, true);
   launch(cmd, argv);
   if (DRY) return;
@@ -296,7 +296,7 @@ async function main() {
   const out = join(ROOT, "projects", h.project, "output");
   const files = existsSync(out) ? readdirSync(out).filter((f) => !f.startsWith(".") && f !== "old") : [];
   say(files.length ? `\n${c.green}✓${c.off} Ready to post, in ${out}:\n${files.map((f) => `  ${f}`).join("\n")}`
-    : `\nNothing in ${out} yet. Resume with: bun launcher/main.ts --build ${h.project}`);
+    : `\nNothing in ${out} yet. Resume with: bun create sifars-reel --build ${h.project}`);
 }
 
 main().catch((e) => fail(String(e?.stack ?? e)));
